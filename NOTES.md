@@ -2,6 +2,9 @@
 
 - 原始規格：使用者在對話中貼上的完整規格（10 節）。已拍板：語言切換用 `#en`（artifact 收不到 query string）。
 - 原始碼在 `parts/`，依檔名順序串成 `index.html`（`sh build.sh`）。`preview.html` 補上 doctype 與 charset，給本機預覽用。
+- Cloudflare（Workers 靜態網站，公開）：https://island-game.kh-lab.workers.dev
+  更新方式：`sh build.sh && npx -y wrangler@4.155.0 deploy`（設定在 `wrangler.jsonc`，上傳 `dist/`）。
+  新版 wrangler 的 `pages project create` 會轉給 Workers 處理然後失敗，所以改走 Workers 靜態網站。
 - 本機預覽：`python3 -m http.server 8765`，然後開 http://localhost:8765/preview.html
 - 五個階段都完成，已發布：https://claude.ai/artifact/CKSjFfcMJWoGTrkNvWhGwo
 - 偏離規格的地方：細項飛行時的右偏量依鏡頭距離縮小；協作線的兩端固定在島前側的步道頂點（原本用最近節點時，相鄰島的路線只有一座橋那麼長）；資料的英文只翻名稱與摘要。
