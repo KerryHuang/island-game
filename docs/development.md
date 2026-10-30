@@ -154,6 +154,12 @@ sh build.sh && npx -y wrangler@4.155.0 deploy
 
 新版 wrangler 已把 Cloudflare Pages 併進 Workers，`wrangler pages project create` 在沒有設定檔時會失敗，所以這裡直接用 Workers 靜態網站。
 
+### 自動部署與每日議題更新
+
+- `.github/workflows/check.yml`：每個 PR 會跑測試與 build。
+- `.github/workflows/deploy.yml`：main 有新提交就部署到 Cloudflare。需要 repo secrets `CLOUDFLARE_API_TOKEN` 與 `CLOUDFLARE_ACCOUNT_ID`。也可以在 Actions 頁面手動觸發。
+- 每日議題更新：`/schedule` 雲端例行任務每天台北 07:00 執行，指示在 [`docs/routine-prompt.md`](routine-prompt.md)。它只改 `data/issues.json` 並開 PR，合併後才會自動部署。
+
 ### claude.ai artifact（私人分享）
 
 `index.html` 也發布成了 claude.ai artifact，預設是私人的，要從頁面的 Share 選單分享。artifact 是另一份副本，要在 Claude Code 裡重新發布才會更新，不會跟著 Cloudflare 一起更新。
