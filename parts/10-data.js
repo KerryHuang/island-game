@@ -42,12 +42,12 @@ const DATA = {
   // 一天時段：start 為分鐘；lit 是該時段亮起的模型種類
   dayCycle: [
     { start: 0, name: '深夜', en: 'Late night', lit: ['hall', 'clock'] },
-    { start: 360, name: '清晨', en: 'Dawn', lit: ['court', 'clinic', 'farm'] },
+    { start: 360, name: '清晨', en: 'Dawn', lit: ['court', 'clinic', 'farm', 'house'] },
     { start: 450, name: '上學通勤', en: 'Morning rush', lit: ['busstop', 'bikes', 'classroom'] },
-    { start: 720, name: '午餐', en: 'Lunch', lit: ['booth', 'farm'] },
+    { start: 720, name: '午餐', en: 'Lunch', lit: ['booth', 'farm', 'coin'] },
     { start: 960, name: '放學', en: 'After school', lit: ['classroom', 'book', 'court'] },
-    { start: 1065, name: '黃昏', en: 'Dusk', lit: ['busstop', 'river'] },
-    { start: 1140, name: '晚上', en: 'Evening', lit: ['stage', 'book', 'coin'] },
+    { start: 1065, name: '黃昏', en: 'Dusk', lit: ['busstop', 'river', 'bikes'] },
+    { start: 1140, name: '晚上', en: 'Evening', lit: ['stage', 'book', 'globe'] },
   ],
 };
 

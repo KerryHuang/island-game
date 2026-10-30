@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-const MODELS = 'house hall booth classroom clinic busstop bikes court farm river stage book coin clock globe'.split(' ');
+export const MODELS = 'house hall booth classroom clinic busstop bikes court farm river stage book coin clock globe'.split(' ');
 const STATUS = ['new', 'debating', 'progress', 'settled'];
 const LEGACY = ['phase', 'desc', 'facts'];
 const ID_RE = /^[a-z]{2}-\d{4}-\d{2}-[a-z0-9-]+$/;
@@ -24,6 +24,7 @@ export function validate(issues, { islandIds, today, blocked = [] }) {
     for (const it of list) {
       const at = `${isl}/${it.id}`, err = (code, msg) => errors.push(`${at}: ${code} ${msg}`);
       if (typeof it.id !== 'string' || !ID_RE.test(it.id)) err('id', '格式應為 <島縮寫>-<YYYY-MM>-<slug>');
+      else if (!it.id.startsWith(isl.slice(0, 2) + '-')) err('id', `前綴應為 ${isl.slice(0, 2)}`);
       else if (seen.has(it.id)) err('duplicate', 'id 重複');
       seen.add(it.id);
       for (const k of ['name', 'en', 'what', 'why']) if (typeof it[k] !== 'string' || !it[k].trim()) err('field', `缺少 ${k}`);
@@ -47,7 +48,7 @@ export function validate(issues, { islandIds, today, blocked = [] }) {
       let fresh = false;
       for (const s of srcs) {
         if (!s || typeof s.url !== 'string' || !s.url.startsWith('https://')) err('https', `來源網址必須是 https：${s && s.url}`);
-        if (!s || !s.title || !s.outlet) err('sources', '來源要有 title 與 outlet');
+        if (!s || typeof s.title !== 'string' || !s.title.trim() || typeof s.outlet !== 'string' || !s.outlet.trim()) err('sources', '來源要有 title 與 outlet 字串');
         if (!s || !DATE_RE.test(s.date || '')) err('sources', '來源 date 格式應為 YYYY-MM-DD');
         else if (DATE_RE.test(it.updated || '')) { const d = days(s.date, it.updated); if (d >= 0 && d <= 14) fresh = true; }
       }
