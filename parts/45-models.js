@@ -198,6 +198,12 @@ function layoutIsland(isl) {
     kit.owner = rec;
     const fn = MODELS[it.model] || MODELS.house;
     fn((kind, p, s, c, rot) => kit.local(frame, kind, p, s, c, rot));
+    if (it.heat >= 2) { // 熱度旗：插在右後角，heat 3 較高且旗頂夜晚發光
+      const h = it.heat === 3 ? .95 : .7;
+      kit.local(frame, 'cylinder', [.44, h / 2, -.44], [.03, h, .03], PAL.stone);
+      kit.local(frame, 'box', [.55, h - .07, -.44], [.2, .13, .02], isl.data.band);
+      kit.local(frame, it.heat === 3 ? 'glowsphere' : 'sphere', [.44, h + .02, -.44], .04, PAL.cream);
+    }
     kit.owner = null;
   });
 }
