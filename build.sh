@@ -2,9 +2,14 @@
 # 把 parts/ 依檔名順序串成單一 index.html（發布 artifact 用，平台會包 skeleton）
 # 另產生 preview.html：補上 doctype／charset，給本機瀏覽器預覽
 # dist/index.html：同 preview.html，給 Cloudflare Pages 部署
-cd "$(dirname "$0")" && {
+set -e
+cd "$(dirname "$0")"
+ISSUES="${ISSUES_FILE:-data/issues.json}"
+node scripts/validate.mjs "$ISSUES" >/dev/null  # 驗證不過就不 build
+{
   for f in parts/*; do
-    case "$f" in parts/10-*) printf 'const ISSUES = '; cat data/issues.json; printf ';\n' ;; esac
+    # 議題文字裡的 </ 改成 <\/，避免 </script> 截斷頁面的 script
+    case "$f" in parts/10-*) printf 'const ISSUES = '; sed 's#</#<\\/#g' "$ISSUES"; printf ';\n' ;; esac
     cat "$f"
   done
 } > index.html

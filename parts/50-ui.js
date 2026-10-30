@@ -128,7 +128,7 @@ function itemCard(r) {
     <div class="eyebrow">${tr('各方怎麼看', 'VIEWS')}</div>
     <ul class="views">${d.views.map((v) => `<li><b>${esc(v.who)}</b>${esc(v.says)}</li>`).join('')}</ul>
     <div class="eyebrow">${tr('取材來源', 'SOURCES')}</div>
-    <ul class="sources">${d.sources.map((x) => `<li><small>${esc(x.outlet)} · ${esc(x.date)}</small><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a></li>`).join('')}</ul>
+    <ul class="sources">${d.sources.map((x) => `<li><small>${esc(x.outlet)} · ${esc(x.date)}</small>${/^https:\/\//.test(x.url) ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a>` : esc(x.title)}</li>`).join('')}</ul>
     <p class="updated">${tr('更新於', 'Updated')} ${esc(d.updated)}</p>
     <div class="chips"><button class="chip cream" type="button" data-island="${isl.data.id}">${tr('回到', 'Back to')} ${esc(isleName(isl))}</button></div>`;
 }

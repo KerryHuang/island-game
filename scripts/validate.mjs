@@ -8,6 +8,8 @@ const LEGACY = ['phase', 'desc', 'facts'];
 const ID_RE = /^[a-z]{2}-\d{4}-\d{2}-[a-z0-9-]+$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const days = (a, b) => (Date.parse(b) - Date.parse(a)) / 864e5;
+// 例行任務在台北早上跑，「今天」要用台北日期，不能用 UTC
+export const taipeiToday = (d = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(d);
 
 export function validate(issues, { islandIds, today, blocked = [] }) {
   const errors = [], warnings = [], seen = new Set();
@@ -62,7 +64,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const islandIds = [...readFileSync(new URL('parts/10-data.js', root), 'utf8').matchAll(/id: '(\w+)', no: '\d\d'/g)].map((m) => m[1]);
   const blocked = readFileSync(new URL('data/blocked-names.txt', root), 'utf8').split('\n').map((s) => s.trim()).filter((s) => s && !s.startsWith('#'));
   const issues = JSON.parse(readFileSync(file, 'utf8'));
-  const { errors, warnings } = validate(issues, { islandIds, today: new Date().toISOString().slice(0, 10), blocked });
+  const { errors, warnings } = validate(issues, { islandIds, today: taipeiToday(), blocked });
   warnings.forEach((w) => console.warn('warn', w));
   if (errors.length) { errors.forEach((e) => console.error(e)); process.exit(1); }
   console.log(`ok ${Object.values(issues).flat().length} issues`);
