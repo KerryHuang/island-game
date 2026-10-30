@@ -1,7 +1,7 @@
 #!/bin/sh
 # 把 parts/ 依檔名順序串成單一 index.html（發布 artifact 用，平台會包 skeleton）
 # 另產生 preview.html：補上 doctype／charset，給本機瀏覽器預覽
-# dist/index.html：同 preview.html，給 Cloudflare Pages 部署
+# dist/index.html：同 preview.html，給 Cloudflare Workers 靜態網站部署
 set -e
 cd "$(dirname "$0")"
 ISSUES="${ISSUES_FILE:-data/issues.json}"
