@@ -2,8 +2,8 @@
 // ================= 介面：選取、高亮、卡片、側欄、HUD =================
 const $ = (id) => document.getElementById(id);
 const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩';
-const PHASES = [['1', '第 1 年', 'Year 1'], ['2-3', '2–3 年', 'Years 2–3'], ['4', '第 4 年', 'Year 4']];
-const EVIDENCE = { official: ['正式政策', 'Official'], thematic: ['主題相關', 'Thematic'], pending: ['規劃中', 'Pending'] };
+const STATUS = { new: ['剛冒出來', 'New'], debating: ['討論中', 'Debating'], progress: ['有進展', 'Moving'], settled: ['已定案', 'Settled'] };
+const EVIDENCE = { official: ['直接牽動', 'Direct'], thematic: ['間接相關', 'Related'], pending: ['有人提出', 'Proposed'] };
 const CARGO = { book: ['書', 'books'], meal: ['餐盒', 'meal boxes'], sapling: ['樹苗', 'saplings'], medkit: ['藥箱', 'medkits'], laptop: ['筆電', 'laptops'], ticket: ['票券', 'tickets'], ball: ['球', 'balls'], letter: ['公文', 'letters'] };
 const flowName = (f) => tr(f.label, f.en);
 const isleName = (i) => tr(i.data.name, i.data.en);
@@ -11,6 +11,10 @@ const itemName = (r) => tr(r.data.name, r.data.en);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const fmtTime = (m) => { const h = Math.floor(m / 60), mm = Math.floor(m % 60 / 10) * 10; return String(h).padStart(2, '0') + ':' + String(mm).padStart(2, '0'); };
 const isDesktop = () => innerWidth > 800;
+const isLit = (rec) => !!S.period && S.period.lit.includes(rec.data.model);
+const statusLabel = (st) => { const x = STATUS[st]; return x ? tr(x[0], x[1]) : st; };
+const heatDots = (h) => `<span class="heat" aria-label="${tr(`熱度 ${h}／3`, `Heat ${h} of 3`)}">${'●'.repeat(h)}${'○'.repeat(3 - h)}</span>`;
+const latestUpdate = () => S.islands.flatMap((i) => i.data.items.map((d) => d.updated)).sort().pop() || '';
 
 S.sel = null; S.period = null; S.show = { names: false, carry: true, flows: false, log: false };
 S.pickers = [];
@@ -18,11 +22,10 @@ S.pickers = [];
 // ---------- 高亮：選取往 coral 混 22%，時段亮起往 yellow 混 22% ----------
 let _hc, CORAL, YELLOW;
 function applyHighlights() {
-  const lit = new Set(S.period ? S.period.lit : []);
   const selItem = S.sel && S.sel.type === 'item' ? S.sel.rec : null;
   const touched = new Set();
   kit.ownerParts.forEach((parts, rec) => {
-    const mix = rec === selItem ? CORAL : lit.has(rec.data.id) ? YELLOW : null;
+    const mix = rec === selItem ? CORAL : isLit(rec) ? YELLOW : null;
     parts.forEach(({ mesh, i, base }) => {
       mesh.setColorAt(i, mix ? _hc.copy(base).lerp(mix, .22) : base); touched.add(mesh);
     });
@@ -103,50 +106,43 @@ function closeCard() { $('card').hidden = true; S.cardOpen = false; if (typeof o
 
 function flowsOf(isl) { return DATA.flows.filter((f) => f.from === isl.data.id || f.to === isl.data.id); }
 function islandCard(isl) {
-  const d = isl.data, lit = new Set(S.period ? S.period.lit : []);
+  const d = isl.data;
   return `<div class="head"><div class="disc" style="background:${d.band}">${d.no}</div>
-      <div><div class="eyebrow">${tr('政策主題', 'POLICY TOPIC')} · ${d.items.length} ${tr('項', 'ITEMS')}</div><h2>${esc(isleName(isl))}</h2></div></div>
+      <div><div class="eyebrow">${tr('議題分類', 'ISSUE AREA')} · ${d.items.length} ${tr('則', 'ISSUES')}</div><h2>${esc(isleName(isl))}</h2></div></div>
     <p>${esc(tr(d.summary, d.summaryEn))}</p>
-    <div class="eyebrow">${tr('細項', 'ITEMS')}</div>
-    <div class="list">${isl.items.map((r) => `<button class="row${lit.has(r.data.id) ? ' lit' : ''}" type="button" data-item="${r.data.id}"><span class="n">${CIRCLED[r.num - 1]}</span>${esc(itemName(r))}<small>${phaseLabel(r.data.phase)}</small></button>`).join('')}</div>
-    ${flowsOf(isl).length ? `<div class="eyebrow">${tr('協作', 'COLLABORATIONS')}</div>
+    <div class="eyebrow">${tr('議題', 'ISSUES')}</div>
+    <div class="list">${isl.items.map((r) => `<button class="row${isLit(r) ? ' lit' : ''}" type="button" data-item="${r.data.id}"><span class="n">${CIRCLED[r.num - 1]}</span>${esc(itemName(r))}<small>${statusLabel(r.data.status)}</small></button>`).join('')}</div>
+    ${flowsOf(isl).length ? `<div class="eyebrow">${tr('牽連', 'LINKS')}</div>
     <div class="chips">${flowsOf(isl).map((f) => `<button class="chip" type="button" data-flow="${f.id}">${esc(flowName(f))}</button>`).join('')}</div>` : ''}`;
 }
-const phaseLabel = (p) => { const x = PHASES.find((q) => q[0] === p); return x ? tr(x[1], x[2]) : p; };
-
-// 從事實抓出最多 3 個大數字
-function bigNumbers(facts) {
-  const out = [];
-  facts.forEach((f) => {
-    const m = f.match(/([\d][\d,.]*)\s*(萬|%|公里|km\/h|分鐘|元|個|座|處|人|戶|天|小時|班|輛|噸|條|棵|盞|倍|間|所|位|點|家|秒|名|份|組|期|團|種|Mbps|件|項|年|個月)?/);
-    if (m && out.length < 3) out.push({ n: m[1] + (m[2] === '萬' || m[2] === '%' ? m[2] : ''), unit: m[2] && m[2] !== '萬' && m[2] !== '%' ? m[2] : '', text: f });
-  });
-  return out;
-}
 function itemCard(r) {
-  const d = r.data, isl = r.island, lit = S.period && S.period.lit.includes(d.id);
-  return `<div class="eyebrow">${isl.data.no} ${esc(isleName(isl))} · ${CIRCLED[r.num - 1]}${lit ? ` · ${tr('此時段亮起', 'ACTIVE NOW')}` : ''}</div>
+  const d = r.data, isl = r.island;
+  return `<div class="eyebrow">${isl.data.no} ${esc(isleName(isl))} · ${CIRCLED[r.num - 1]}${isLit(r) ? ` · ${tr('此時段亮起', 'ACTIVE NOW')}` : ''}</div>
     <h2>${esc(itemName(r))}</h2>
     <canvas class="thumb" width="320" height="320" style="width:160px;height:160px" aria-hidden="true"></canvas>
-    <p>${esc(d.desc)}</p>
-    <div class="tiles">${bigNumbers(d.facts).map((b) => `<div class="tile"><span class="num">${esc(b.n)}<span style="font-size:14px;font-style:normal;margin-left:2px">${esc(b.unit)}</span></span><small>${esc(b.text)}</small></div>`).join('')}</div>
-    <div class="eyebrow">${tr('重點', 'KEY FACTS')}</div>
-    <ul class="facts">${d.facts.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
-    <div class="eyebrow">${tr('時程', 'TIMELINE')}</div>
-    <div class="timeline">${PHASES.map((p) => `<div class="${p[0] === d.phase ? 'on' : ''}">${tr(p[1], p[2])}</div>`).join('')}</div>
+    <div class="status"><span class="st ${esc(d.status)}">${statusLabel(d.status)}</span>${heatDots(d.heat)}</div>
+    <div class="eyebrow">${tr('發生什麼', 'WHAT HAPPENED')}</div>
+    <p>${esc(d.what)}</p>
+    <div class="eyebrow">${tr('為什麼跟你有關', 'WHY IT MATTERS')}</div>
+    <p>${esc(d.why)}</p>
+    <div class="eyebrow">${tr('各方怎麼看', 'VIEWS')}</div>
+    <ul class="views">${d.views.map((v) => `<li><b>${esc(v.who)}</b>${esc(v.says)}</li>`).join('')}</ul>
+    <div class="eyebrow">${tr('取材來源', 'SOURCES')}</div>
+    <ul class="sources">${d.sources.map((x) => `<li><small>${esc(x.outlet)} · ${esc(x.date)}</small>${/^https:\/\//.test(x.url) ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a>` : esc(x.title)}</li>`).join('')}</ul>
+    <p class="updated">${tr('更新於', 'Updated')} ${esc(d.updated)}</p>
     <div class="chips"><button class="chip cream" type="button" data-island="${isl.data.id}">${tr('回到', 'Back to')} ${esc(isleName(isl))}</button></div>`;
 }
 function flowCard(f, w) {
   const a = S.islandById[f.from], b = S.islandById[f.to], ev = EVIDENCE[f.evidence], cg = CARGO[f.cargo];
-  return `<div class="eyebrow">${w ? tr('搬運中的市民', 'CITIZEN ON THE MOVE') : tr('協作線', 'COLLABORATION')}</div>
+  return `<div class="eyebrow">${w ? tr('搬運中的市民', 'CITIZEN ON THE MOVE') : tr('議題牽連', 'ISSUE LINK')}</div>
     <h2>${esc(flowName(f))}</h2>
     <div class="flowline"><button class="chip" type="button" data-island="${a.data.id}">${a.data.no} ${esc(isleName(a))}</button><span aria-hidden="true">→</span><button class="chip" type="button" data-island="${b.data.id}">${b.data.no} ${esc(isleName(b))}</button></div>
     <div class="tiles">
-      <div class="tile"><small>${tr('證據等級', 'Evidence')}</small><span><span class="ev ${f.evidence}">${tr(ev[0], ev[1])}</span></span></div>
+      <div class="tile"><small>${tr('牽連程度', 'Strength')}</small><span><span class="ev ${f.evidence}">${tr(ev[0], ev[1])}</span></span></div>
       <div class="tile"><small>${tr('搬運物', 'Cargo')}</small><b>${tr(cg[0], cg[1])}</b></div>
       <div class="tile"><small>${tr('路上人數', 'Walkers')}</small><span class="num">${f.count}</span></div>
     </div>
-    <p>${tr(`市民從「${a.data.name}」把${cg[0]}送到「${b.data.name}」，交接後再走回去。`, `Citizens carry ${cg[1]} from ${a.data.en} to ${b.data.en}, hand them over, then walk back.`)}</p>`;
+    <p>${tr(`「${a.data.name}」和「${b.data.name}」的議題彼此牽動。市民把${cg[0]}從一邊送到另一邊，交接後再走回去。`, `Issues in ${a.data.en} and ${b.data.en} affect each other. Citizens carry ${cg[1]} between them, then walk back.`)}</p>`;
 }
 function bindCardLinks(root) {
   root.querySelectorAll('[data-item]').forEach((el) => el.addEventListener('click', () => selectItem(S.itemById[el.dataset.item])));
@@ -186,17 +182,19 @@ function renderSide() {
   if (sideTab === 'topics') {
     const html = S.islands.map((isl) => {
       const d = isl.data, topicHit = hit(d.name) || hit(d.en) || hit(d.summary);
-      const items = isl.items.filter((r) => topicHit || hit(r.data.name) || hit(r.data.en) || hit(r.data.desc));
+      const items = isl.items.filter((r) => topicHit || [r.data.name, r.data.en, r.data.what, r.data.why, ...r.data.views.map((v) => v.says)].some(hit));
       if (!items.length) return '';
       return `<details${q ? ' open' : ''}><summary><span class="dot" style="background:${d.band}"></span>${d.no} ${esc(isleName(isl))}<small>${isl.items.length}</small></summary>
         <div class="list"><button class="row" type="button" data-island="${d.id}"><span class="n">◎</span>${tr('看整座島', 'View island')}</button>
         ${items.map((r) => `<button class="row" type="button" data-item="${r.data.id}"><span class="n">${CIRCLED[r.num - 1]}</span>${esc(itemName(r))}</button>`).join('')}</div></details>`;
     }).join('');
-    list.innerHTML = html || `<div class="empty">${tr('找不到符合的政策，換個關鍵字試試。', 'No matching policies. Try another keyword.')}</div>`;
+    const hot = q ? [] : S.islands.flatMap((i) => i.items).filter((r) => r.data.heat === 3);
+    const hotHtml = hot.length ? `<div class="hot"><div class="eyebrow">${tr('本週熱門', 'HOT THIS WEEK')}</div><div class="list">${hot.map((r) => `<button class="row" type="button" data-item="${r.data.id}"><span class="n">${r.island.data.no}</span>${esc(itemName(r))}<small>${statusLabel(r.data.status)}</small></button>`).join('')}</div></div>` : '';
+    list.innerHTML = html ? hotHtml + html : `<div class="empty">${tr('找不到符合的議題，換個關鍵字試試。', 'No matching issues. Try another keyword.')}</div>`;
   } else {
     const fl = DATA.flows.filter((f) => hit(f.label) || hit(f.en) || hit(S.islandById[f.from].data.name) || hit(S.islandById[f.to].data.name));
     list.innerHTML = fl.map((f) => `<button class="row" type="button" data-flow="${f.id}"><span class="ev ${f.evidence}">${tr(EVIDENCE[f.evidence][0], EVIDENCE[f.evidence][1])}</span>${esc(flowName(f))}</button>`).join('')
-      || `<div class="empty">${tr('找不到符合的協作關係。', 'No matching collaborations.')}</div>`;
+      || `<div class="empty">${tr('找不到符合的議題牽連。', 'No matching links.')}</div>`;
   }
   bindCardLinks(list);
 }
@@ -353,5 +351,6 @@ function buildUI() {
   };
   setSideOpen(isDesktop());
   renderSide();
+  $('updatedDate').textContent = latestUpdate();
   onMinute(true);
 }

@@ -81,7 +81,7 @@ function setupRenderer() {
   r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1;
   stage.appendChild(r.domElement);
   r.domElement.setAttribute('tabindex', '0');
-  r.domElement.setAttribute('aria-label', tr('3D 政策城市，方向鍵旋轉鏡頭', '3D policy city, arrow keys rotate'));
+  r.domElement.setAttribute('aria-label', tr('3D 議題城市，方向鍵旋轉鏡頭', '3D issue city, arrow keys rotate'));
   S.renderer = r;
 
   const lr = new CSS2DRenderer({ element: document.getElementById('labels') });
