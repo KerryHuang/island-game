@@ -55,7 +55,7 @@ python3 -m http.server 8765
 ```sh
 sed -n '/<script type="module">/,/<\/script>/p' index.html | sed '1d;$d' > /tmp/check.mjs
 node --check /tmp/check.mjs
-node --test tests/              # 驗證腳本的測試
+node --test tests/*.test.mjs              # 驗證腳本的測試
 node scripts/validate.mjs       # 驗證 data/issues.json，通過時輸出 ok N issues
 ```
 

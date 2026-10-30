@@ -25,7 +25,7 @@
 5. 每個新加的來源都要做兩項檢查，兩項都通過才收：
    - 用 WebFetch 讀過內文。
    - `curl -s -o /dev/null -w '%{http_code}' -L -A 'Mozilla/5.0' --max-time 20 URL` 回 200。
-6. 驗證：`node scripts/validate.mjs`、`node --test tests/`、`sh build.sh` 都要通過。失敗就修，最多修兩輪。
+6. 驗證：`node scripts/validate.mjs`、`node --test tests/*.test.mjs`、`sh build.sh` 都要通過。失敗就修，最多修兩輪。
 7. 收尾。依情況擇一：
    - **沒有值得改的**：不建分支、不開 PR，最後回報「今天沒有更新」。
    - **驗證通過**：

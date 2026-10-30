@@ -91,7 +91,7 @@
 3. 決定改動：新增議題，更新 `status`、`heat`、`views`、`sources`，移除 heat 0 的議題。**每次最多改 8 則。**
 4. 沒有新報導的舊議題，heat 降 1。
 5. 跑 `node scripts/validate.mjs`，必須輸出 `ok`。
-6. 跑 `node --test tests/` 與 `sh build.sh`。
+6. 跑 `node --test tests/*.test.mjs` 與 `sh build.sh`。
 
 ## PR 內文格式
 
