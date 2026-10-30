@@ -12,8 +12,8 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 const fmtTime = (m) => { const h = Math.floor(m / 60), mm = Math.floor(m % 60 / 10) * 10; return String(h).padStart(2, '0') + ':' + String(mm).padStart(2, '0'); };
 const isDesktop = () => innerWidth > 800;
 const isLit = (rec) => !!S.period && S.period.lit.includes(rec.data.model);
-const statusLabel = (st) => { const x = STATUS[st]; return x ? tr(x[0], x[1]) : st; };
-const heatDots = (h) => `<span class="heat" aria-label="${tr(`熱度 ${h}／3`, `Heat ${h} of 3`)}">${'●'.repeat(h)}${'○'.repeat(3 - h)}</span>`;
+const statusLabel = (st) => { const x = STATUS[st]; return x ? tr(x[0], x[1]) : esc(st); };
+const heatDots = (n) => { const h = Math.max(0, Math.min(3, n | 0)); return `<span class="heat" aria-label="${tr(`熱度 ${h}／3`, `Heat ${h} of 3`)}">${'●'.repeat(h)}${'○'.repeat(3 - h)}</span>`; };
 const latestUpdate = () => S.islands.flatMap((i) => i.data.items.map((d) => d.updated)).sort().pop() || '';
 
 S.sel = null; S.period = null; S.show = { names: false, carry: true, flows: false, log: false };

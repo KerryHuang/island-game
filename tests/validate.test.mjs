@@ -90,3 +90,13 @@ test('含舊欄位 facts', () => {
   const d = good(); d.edu[0].facts = ['x'];
   assert.match(errs(d), /legacy/);
 });
+
+test('id 前綴要是該島縮寫', () => {
+  const d = good(); d.care[0].id = 'tr-2026-10-item1';
+  assert.match(errs(d), /care\/tr-2026-10-item1: id/);
+});
+
+test('來源 title 與 outlet 要是字串', () => {
+  const d = good(); d.edu[0].sources[0].title = 123;
+  assert.match(errs(d), /edu.*sources.*title/);
+});
