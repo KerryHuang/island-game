@@ -16,7 +16,7 @@
 
 - 設計與計畫：`docs/superpowers/specs/2026-10-30-city-issue-map-design.md`、`docs/superpowers/plans/2026-10-30-city-issue-map.md`。
 - 定位：虛構城市＋真實議題。細項改成取材自新聞的議題，卡片分「發生什麼／為什麼跟你有關／各方怎麼看／取材來源」；拿掉數字磚與時程。
-- 資料：議題在 `data/issues.json`，`build.sh` 嵌進單一 HTML；`node scripts/validate.mjs` 驗證，`node --test tests/` 有 13 項測試。
+- 資料：議題在 `data/issues.json`，`build.sh` 嵌進單一 HTML；`node scripts/validate.mjs` 驗證，`node --test tests/*.test.mjs` 有 13 項測試。
 - 首版 39 則：4 個研究員平行找 2026-10-16 之後的新聞，交回 46 則，刪 7 則（重複、各方看法同一邊、選舉政見比較等）。62 個來源網址 curl 全 200；抽查 6 則 heat 3，修掉 3 處沒有出處的說法。
 - 熱度旗只插 heat 3（全城 6 則）；首版 31 則是 heat 2，全插旗會失去意義。
 - 時段高亮改成依模型種類，議題換了也不會失效。

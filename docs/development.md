@@ -55,7 +55,7 @@ python3 -m http.server 8765
 ```sh
 sed -n '/<script type="module">/,/<\/script>/p' index.html | sed '1d;$d' > /tmp/check.mjs
 node --check /tmp/check.mjs
-node --test tests/              # 驗證腳本的測試
+node --test tests/*.test.mjs              # 驗證腳本的測試
 node scripts/validate.mjs       # 驗證 data/issues.json，通過時輸出 ok N issues
 ```
 
@@ -153,6 +153,12 @@ sh build.sh && npx -y wrangler@4.155.0 deploy
 網址：https://island-game.kh-lab.workers.dev
 
 新版 wrangler 已把 Cloudflare Pages 併進 Workers，`wrangler pages project create` 在沒有設定檔時會失敗，所以這裡直接用 Workers 靜態網站。
+
+### 自動部署與每日議題更新
+
+- `.github/workflows/check.yml`：每個 PR 會跑測試與 build。
+- `.github/workflows/deploy.yml`：main 有新提交就部署到 Cloudflare。需要 repo secrets `CLOUDFLARE_API_TOKEN` 與 `CLOUDFLARE_ACCOUNT_ID`。也可以在 Actions 頁面手動觸發。
+- 每日議題更新：`/schedule` 雲端例行任務每天台北 07:00 執行，指示在 [`docs/routine-prompt.md`](routine-prompt.md)。它只改 `data/issues.json` 並開 PR，合併後才會自動部署。
 
 ### claude.ai artifact（私人分享）
 
