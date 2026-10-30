@@ -43,6 +43,17 @@ sh build.sh && npx -y wrangler@4.155.0 deploy
 
 詳細步驟見[開發指南](docs/development.md)。
 
+## 來源與致謝
+
+- **靈感**：2026 年 10 月台北市長選戰中，沈伯洋競選團隊推出的「HEART 政策島」，用六角形小島拼成城市來呈現政見，之後引發一波模仿與二創。背景可參考[維基百科「政策島」條目](https://zh.wikipedia.org/wiki/%E6%94%BF%E7%AD%96%E5%B3%B6)與 [AI 新視界的技術拆解](https://aiview.tw/articles/teardown-heart-island-threejs-ai-built-2026-10)。
+- **規格**：來自網路上流傳的「{示範市}政策島」prompt 模板，城市名留空讓人自填。確切出處不明。
+- **程式**：依那份規格從零寫成，沒有複製 HEART 政策島或其他政策島的原始碼與資料。本專案與任何政黨、候選人或競選團隊都沒有關係。
+- **第三方套件**：[Three.js](https://threejs.org/)（MIT 授權），執行時從 jsDelivr CDN 載入。
+
+## 授權
+
+[MIT](LICENSE)。授權範圍是本 repo 的程式碼、文件與截圖。
+
 ## 作者
 
 Kerry，與 Claude Code 協作完成。
