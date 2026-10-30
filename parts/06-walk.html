@@ -18,7 +18,7 @@
 #logList .k { font: 700 9px var(--mono); letter-spacing: 1px; padding: 1px 5px; border-radius: 4px; margin-right: 4px; background: var(--cream); }
 #logList .k.arrive { background: var(--yellow); } #logList .k.handoff { background: #f2b5c6; }
 
-/* ===== 協作線圖例 ===== */
+/* ===== 牽連線圖例 ===== */
 #legend {
   position: fixed; z-index: 11; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px));
   display: flex; gap: 14px; padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap;
@@ -32,11 +32,11 @@
 </style>
 <section id="log" class="panel" hidden aria-label="城市日誌" data-en-label="City log">
   <header><b data-en="City log">城市日誌</b><span class="live">LIVE</span></header>
-  <select id="logFilter" aria-label="依協作線篩選" data-en-label="Filter by collaboration"></select>
+  <select id="logFilter" aria-label="依牽連線篩選" data-en-label="Filter by link"></select>
   <ol id="logList" aria-live="off"></ol>
 </section>
 <div id="legend" class="panel" hidden>
-  <span><i></i><span data-en="Official">正式政策</span></span>
-  <span><i class="thematic"></i><span data-en="Thematic">主題相關</span></span>
-  <span><i class="pending"></i><span data-en="Pending">規劃中</span></span>
+  <span><i></i><span data-en="Direct">直接牽動</span></span>
+  <span><i class="thematic"></i><span data-en="Related">間接相關</span></span>
+  <span><i class="pending"></i><span data-en="Proposed">有人提出</span></span>
 </div>

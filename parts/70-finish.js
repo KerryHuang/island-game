@@ -38,11 +38,11 @@ function refreshLang() {
   readLang(); applyStaticLang();
   S.islands.forEach((isl) => { isl.labelEl.innerHTML = `<b>${isl.data.no}</b><span>${esc(isleName(isl))}</span>`; });
   renderSide(); updateClockUI();
-  $('logFilter').innerHTML = `<option value="">${tr('全部協作線', 'All collaborations')}</option>` + DATA.flows.map((f) => `<option value="${f.id}">${esc(flowName(f))}</option>`).join('');
+  $('logFilter').innerHTML = `<option value="">${tr('全部牽連線', 'All links')}</option>` + DATA.flows.map((f) => `<option value="${f.id}">${esc(flowName(f))}</option>`).join('');
   if (!$('log').hidden) renderLog();
   if (S.sel) openCard(S.sel);
   $('langBtn').textContent = LANG === 'en' ? '中文' : 'EN';
-  S.renderer.domElement.setAttribute('aria-label', tr('3D 政策城市，方向鍵旋轉鏡頭', '3D policy city, arrow keys rotate'));
+  S.renderer.domElement.setAttribute('aria-label', tr('3D 議題城市，方向鍵旋轉鏡頭', '3D issue city, arrow keys rotate'));
   markDirty();
 }
 

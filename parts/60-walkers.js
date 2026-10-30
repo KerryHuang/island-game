@@ -255,7 +255,7 @@ function buildWalkersAll() {
   _m = new THREE.Matrix4(); _base = new THREE.Matrix4(); _q = new THREE.Quaternion(); _e = new THREE.Euler(); _v = new THREE.Vector3(); _sv = new THREE.Vector3();
   buildFlows();
   buildWalkers();
-  $('logFilter').innerHTML = `<option value="">${tr('全部協作線', 'All collaborations')}</option>` + DATA.flows.map((f) => `<option value="${f.id}">${esc(flowName(f))}</option>`).join('');
+  $('logFilter').innerHTML = `<option value="">${tr('全部牽連線', 'All links')}</option>` + DATA.flows.map((f) => `<option value="${f.id}">${esc(flowName(f))}</option>`).join('');
   $('logFilter').addEventListener('change', renderLog);
   poseWalkers();
 }
