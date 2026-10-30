@@ -11,12 +11,12 @@ parts/
   06-walk.html        城市日誌、協作線圖例的樣式與 HTML
   07-finish.html      說明視窗、手機版樣式
   08-script-open.html importmap 與 <script type="module"> 開頭
-  10-data.js          DATA：所有示範內容
+  10-data.js          DATA：城市、島、議題牽連、時段；議題本身在 data/issues.json
   20-core.js          常數、工具函式、渲染器、相機、飛行
   25-env.js           天空、光線、水面、日夜 keyframes
   30-islands.js       程序貼圖、六角島、橋、路網與 Dijkstra、島名標籤
   40-kit.js           零件庫：所有靜態物件走 InstancedMesh
-  45-models.js        15 種細項模型與島內配置
+  45-models.js        15 種模型、島內配置、熱度旗
   47-furniture.js     路燈、盆栽、長椅、島上大樹、夜晚光池
   48-world.js         盆地地形、背景樹、遠山、雲、海上小島與帆船
   50-ui.js            選取、高亮、卡片、側欄、HUD、標籤避讓
@@ -24,6 +24,16 @@ parts/
   70-finish.js        手機 bottom sheet、說明、reduced-motion、語言切換
   90-main.js          啟動流程、render loop、錯誤畫面
 ```
+
+```
+data/
+  issues.json         議題：唯一會隨時事變動的檔案
+  blocked-names.txt   views.who 不能出現的人名
+scripts/validate.mjs  驗證 issues.json
+tests/                validate.mjs 的測試（node:test）
+```
+
+`build.sh` 會把 `data/issues.json` 嵌成 `const ISSUES = …;`，放在 `10-data.js` 前面，所以成品仍是單一 HTML 檔。
 
 `build.sh` 產出三個檔案，都不進版控：
 
@@ -45,68 +55,73 @@ python3 -m http.server 8765
 ```sh
 sed -n '/<script type="module">/,/<\/script>/p' index.html | sed '1d;$d' > /tmp/check.mjs
 node --check /tmp/check.mjs
+node --test tests/              # 驗證腳本的測試
+node scripts/validate.mjs       # 驗證 data/issues.json，通過時輸出 ok N issues
 ```
 
-## 換內容：DATA 格式
+## 換內容
 
-程式完全由 `parts/10-data.js` 裡的 `DATA` 驅動，換內容通常只需要改這個檔案。
+### 議題：data/issues.json
 
-### 城市
+議題依島分組，key 是島的 `id`：
+
+```json
+{ "traffic": [ { "id": "tr-2026-10-mrt-peak", "name": "捷運尖峰加班車", "en": "Extra peak trains",
+    "model": "busstop", "status": "debating", "heat": 3,
+    "what": "…", "why": "…",
+    "views": [ { "who": "通勤族", "says": "…" }, { "who": "營運單位", "says": "…" } ],
+    "sources": [ { "title": "…", "outlet": "…", "url": "https://…", "date": "2026-10-28" } ],
+    "updated": "2026-10-30" } ],
+  "care": [ … ] }
+```
+
+欄位規則、寫法與每座島收哪類新聞，都在[更新守則](update-guide.md)。重點：
+
+- 每座島 3 到 8 則；heat 3 全城最多 6 則。
+- 載入時依 heat 由高到低、再依 `updated` 由新到舊排序。排第一的佔島中央的主位，編號 ①②… 也照這個順序。JSON 裡的順序沒有意義。
+- heat 3 的議題會在建物右後角插旗，旗頂夜晚發光。
+- 改完一定要跑 `node scripts/validate.mjs`。
+
+### 城市與島
 
 ```js
 city: { name: '今日', en: 'Today', subtitle: '群島', subtitleEn: 'Isles' }
 ```
 
-注意：`DATA.city` 目前沒有被程式讀取。品牌卡、載入畫面和 `<title>` 上的城市名稱直接寫在 `parts/00-head.html` 裡，換城市名稱時要改那個檔案。
-
-### 島（政策主題）
+注意：`DATA.city` 目前沒有被程式讀取。品牌卡、載入畫面和 `<title>` 上的名稱直接寫在 `parts/00-head.html` 裡。
 
 ```js
 { id: 'traffic', no: '01', name: '交通', en: 'Transit', q: 0, r: 0,
-  ground: 'stripe', tree: 'round', band: '#db6a41',
-  summary: '…', summaryEn: '…', items: [ … ] }
+  ground: 'stripe', tree: 'round', band: '#db6a41', summary: '…', summaryEn: '…' }
 ```
 
 - `q`、`r`：六角格的 axial 座標。島和島要彼此相鄰（axial 距離為 1），橋才會自動接上。
 - `ground`：地面花紋，可用 `brick`、`speckle`、`stripe`。
 - `tree`：島上大樹的樹種，可用 `cone`、`cherry`、`fruit`、`palm`、`willow`、`round`。
-- `band`：島緣圖案帶的顏色，也用在清單和卡片上。
+- `band`：島緣圖案帶的顏色，也用在清單、卡片和熱度旗上。
+- `model`（在議題裡）：可用 `house`、`hall`、`booth`、`classroom`、`clinic`、`busstop`、`bikes`、`court`、`farm`、`river`、`stage`、`book`、`coin`、`clock`、`globe`。寫錯時會退回 `house`，但驗證會擋下。
 
-### 細項
-
-```js
-{ id: 'tr1', name: '幹線公車重整', en: 'Trunk bus redesign', model: 'busstop', phase: '2-3',
-  desc: '把繞路的公車線拉直，尖峰十分鐘一班。',
-  facts: ['12 條幹線改為 10 分鐘一班', '平均通勤縮短 9 分鐘', '新增 48 座候車亭'] }
-```
-
-- 每座島的第一個細項是主建物，放在島的後方中央，尺寸最大。
-- `model`：模型種類，可用 `house`、`hall`、`booth`、`classroom`、`clinic`、`busstop`、`bikes`、`court`、`farm`、`river`、`stage`、`book`、`coin`、`clock`、`globe`。寫錯時會退回 `house`。
-- `phase`：時程，可用 `1`、`2-3`、`4`。
-- `facts`：卡片上的大數字磚會從每條事實抓第一個數字和緊接的單位，最多 3 個。事實要以數字開頭或含數字才會顯示成大數字。
-- 一座島放 3 到 8 個細項，都能用 0.62 的格子排下。超過 8 個時，格子會自動縮小，最小到 0.46。
-
-### 協作線
+### 議題牽連
 
 ```js
-{ id: 'f1', from: 'edu', to: 'culture', cargo: 'book', role: 'student',
-  evidence: 'official', label: '圖書館支援課後陪讀', en: 'Libraries support tutoring', count: 8 }
+{ id: 'f4', from: 'elder', to: 'traffic', cargo: 'medkit', role: 'elder',
+  evidence: 'official', label: '高齡者怎麼出門', en: 'Getting around in old age', count: 7 }
 ```
 
 - `from`、`to`：島的 `id`。路線會從兩座島前側的步道出發，用 Dijkstra 沿路網和橋算出來。
 - `cargo`：搬運物，決定小人手上方塊的顏色和頭上的圖示。可用 `book`、`meal`、`sapling`、`medkit`、`laptop`、`ticket`、`ball`、`letter`。
 - `role`：走路的角色，決定配件。可用 `civil`、`researcher`、`elder`、`student`、`parent`、`commuter`、`farmer`、`worker`、`tourist`。`commuter` 會騎腳踏車，速度比較快。
-- `evidence`：`official` 是實線，`thematic` 是虛線，`pending` 是點線。
+- `evidence`：`official` 是直接牽動（實線），`thematic` 是間接相關（虛線），`pending` 是有人提出（點線）。
 - `count`：小人數量，會限制在 4 到 14 之間。
 
 ### 一天的時段
 
 ```js
-{ start: 450, name: '上學通勤', en: 'Morning rush', lit: ['tr1', 'tr2', 'tr4', 'ed1'] }
+{ start: 450, name: '上學通勤', en: 'Morning rush', lit: ['busstop', 'bikes', 'classroom'] }
 ```
 
 - `start`：從 0 點起算的分鐘數。
-- `lit`：這個時段要亮起黃色的細項 `id`。
+- `lit`：這個時段要亮起黃色的**模型種類**。用模型種類而不是議題 id，議題每次更新都會換，時段高亮也不會失效。
 
 ## 加一種新模型
 
@@ -123,7 +138,7 @@ fountain(L) {
 
 `L(幾何, 位置, 縮放, 顏色, 旋轉)` 會把零件推進零件庫。幾何可用 `box`、`rbox`、`cylinder`、`cone`、`sphere`、`ico`、`dome`、`torus`、`prism`、`hip`（四坡屋頂），以及夜晚會發光的 `glowbox`、`glowsphere`。所有零件最後依幾何合併成 InstancedMesh，不會增加 draw call。
 
-加完後，在 `DATA` 裡把細項的 `model` 設成新名稱即可。
+加完後，在 `scripts/validate.mjs` 的 `MODELS` 清單補上新名稱，議題的 `model` 才能用它。
 
 ## 部署
 
@@ -157,7 +172,7 @@ artifact 的網址只會把 `#名稱` 這種 hash 傳進頁面，query string �
 
 ## 已知限制
 
-- 英文版的細項說明與重點事實還是中文。
+- 英文版的議題內容、各方看法與來源還是中文。
 - `DATA.city` 沒有接上程式，城市名稱要改 `00-head.html`。
-- 沒有自動化測試。目前的驗證方式是語法檢查加上瀏覽器實測。
+- 只有 `validate.mjs` 有自動化測試，畫面的驗證方式是語法檢查加上瀏覽器實測。
 - 只在 Chrome 測過，Safari 和 Firefox 都還沒測。
