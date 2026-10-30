@@ -54,7 +54,7 @@ node --check /tmp/check.mjs
 ### 城市
 
 ```js
-city: { name: '示範市', en: 'Demo City', subtitle: '政策島', subtitleEn: 'Policy Islands' }
+city: { name: '今日', en: 'Today', subtitle: '群島', subtitleEn: 'Isles' }
 ```
 
 注意：`DATA.city` 目前沒有被程式讀取。品牌卡、載入畫面和 `<title>` 上的城市名稱直接寫在 `parts/00-head.html` 裡，換城市名稱時要改那個檔案。

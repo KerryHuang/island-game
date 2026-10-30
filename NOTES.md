@@ -1,4 +1,4 @@
-# 示範市政策島：進度
+# 今日群島：進度
 
 - 原始規格：使用者在對話中貼上的完整規格（10 節）。已拍板：語言切換用 `#en`（artifact 收不到 query string）。
 - 原始碼在 `parts/`，依檔名順序串成 `index.html`（`sh build.sh`）。`preview.html` 補上 doctype 與 charset，給本機預覽用。

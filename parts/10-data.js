@@ -1,6 +1,6 @@
 // ================= DATA：全部示範內容（虛構） =================
 const DATA = {
-  city: { name: '示範市', en: 'Demo City', subtitle: '政策島', subtitleEn: 'Policy Islands' },
+  city: { name: '今日', en: 'Today', subtitle: '群島', subtitleEn: 'Isles' },
   islands: [
     { id: 'traffic', no: '01', name: '交通', en: 'Transit', q: 0, r: 0, ground: 'stripe', tree: 'round', band: '#db6a41',
       summary: '公車、單車與步行串成一張網，通勤時間縮短。', summaryEn: 'Buses, bikes and sidewalks woven into one network.',
