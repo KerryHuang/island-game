@@ -93,6 +93,7 @@
 }
 #hud .sep { width: 1px; height: 30px; background: var(--line); margin: 0 4px; }
 #hud .btn { border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+#hud .btn[aria-pressed] { aspect-ratio: 1; border-radius: 10px; justify-content: center; } /* 開關按下時是正方形 */
 #clockBox { display: grid; justify-items: center; padding: 0 12px; min-width: 64px; }
 #clockTime { font: italic 700 20px/1 var(--num); font-variant-numeric: tabular-nums; }
 #clockPeriod { font-size: 11px; color: #6b5d55; margin-top: 2px; white-space: nowrap; }
