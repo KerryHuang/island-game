@@ -351,5 +351,6 @@ function buildUI() {
   };
   setSideOpen(isDesktop());
   renderSide();
+  $('updatedDate').textContent = latestUpdate();
   onMinute(true);
 }

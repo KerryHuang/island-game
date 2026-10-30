@@ -50,6 +50,7 @@ button { font: inherit; color: inherit; }
 }
 #brand h1 { margin: 2px 0 0; font-size: 22px; font-weight: 900; letter-spacing: 1px; line-height: 1.15; }
 #brand h1 small { font-size: 14px; font-weight: 700; color: var(--coral); margin-left: 6px; letter-spacing: 3px; }
+#updatedAt { margin-top: 4px; font: 600 11px var(--mono); color: #8a7b70; }
 
 /* 島名標籤 */
 .isle-label {
@@ -69,13 +70,14 @@ button { font: inherit; color: inherit; }
 <div id="stage"></div>
 <div id="labels"></div>
 <header id="brand">
-  <div class="eyebrow" data-en="DEMO · FICTIONAL DATA">示範 · 虛構資料</div>
+  <div class="eyebrow" data-en="FICTIONAL CITY · ISSUES FROM THE NEWS">虛構城市 · 議題取材自新聞</div>
   <h1><span id="cityName" data-en="Today">今日</span><small data-en="Isles">群島</small></h1>
+  <div id="updatedAt"><span data-en="Data as of">資料更新於</span> <span id="updatedDate"></span></div>
 </header>
 <div id="loading" role="status">
   <div>
     <h1><span data-en="Today " style="color:inherit">今日</span><span data-en="Isles">群島</span></h1>
-    <p><span data-en="Assembling the policy city">正在組合政策城市</span><span class="dots"></span></p>
+    <p><span data-en="Gathering today's issues">正在整理今天的議題</span><span class="dots"></span></p>
     <div id="loadErr" class="err" hidden></div>
   </div>
 </div>
