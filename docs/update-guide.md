@@ -93,7 +93,9 @@
 5. 跑 `node scripts/validate.mjs`，必須輸出 `ok`。
 6. 跑 `node --test tests/*.test.mjs` 與 `sh build.sh`。
 
-## PR 內文格式
+## 改動表格式
+
+例行任務直接推 main 時放在 commit 訊息內文，開 PR 時放在 PR 內文。
 
 ```
 ## 議題更新 YYYY-MM-DD
@@ -106,4 +108,4 @@
 驗證：validate ok N issues；tests pass；build ok
 ```
 
-沒有值得改的就不開 PR。
+沒有值得改的就不提交。

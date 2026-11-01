@@ -37,17 +37,17 @@ sed -n '/<script type="module">/,/<\/script>/p' index.html | sed '1d;$d' > /tmp/
 
 ## Git 與部署
 
-- **main 一有新提交就會自動部署到正式站。** 不要直接推 main，一律開分支、發 PR，等 PR 檢查通過。
+- **main 一有新提交就會自動部署到正式站。** 不要直接推 main，一律開分支、發 PR，等 PR 檢查通過。唯一例外是每日議題更新例行任務，見下方。
 - 用 `git status --short` 確認要加的檔案，逐檔指名 `git add`，不要用 `git add -A` 或 `git add .`。
-- 不要合併 PR，除非使用者明確說可以。例外是每日議題更新 PR，見下方。
+- 不要合併 PR，除非使用者明確說可以。
 - 部署到正式站、刪除遠端分支，都要先問使用者。
 - 要給使用者看效果，用 `npx -y wrangler@4.155.0 versions upload` 上傳預覽版。這不會影響正式站。
 
 ## 每日議題更新
 
-- `/schedule` 雲端例行任務每天台北 07:00 執行，指示在 `docs/routine-prompt.md`。它只改 `data/issues.json` 並開 PR，分支名稱是 `issues/YYYY-MM-DD`。
-- 議題 PR 會開啟 auto-merge：`check.yml` 通過就自動合併並部署，不經人工審。檢查失敗或有衝突時會停在 PR 等人處理。
-- auto-merge 要靠 repo 設定才會生效：Settings → General 要勾 Allow auto-merge，main 的 branch protection 要把 `check` 設成必過的檢查。
+- `/schedule` 雲端例行任務每天台北 07:00 執行，指示在 `docs/routine-prompt.md`。它只改 `data/issues.json`，驗證通過後直接推 main 並自動部署，不經 PR 與人工審。
+- 推不上 main（保護規則、衝突）時，它會改推分支 `issues/YYYY-MM-DD` 並開 PR。
+- 手動更新議題（`/update-issues`）仍然走 PR。
 - 雲端執行環境會擋掉 curl 連新聞網站，來源有沒有效以 WebFetch 讀不讀得到內文為準。
 
 ## 容易踩的坑
