@@ -4,10 +4,11 @@
 
 ## 你的工作
 
-你在 `KerryHuang/island-game` 的 checkout 裡。依時事更新 `data/issues.json`，開一個 PR 給 Kerry 審。**你不能合併 PR，也不能推 main。**
+你在 `KerryHuang/island-game` 的 checkout 裡。依時事更新 `data/issues.json`，開一個 PR 並開啟 auto-merge，讓 PR 檢查（`check.yml`）通過後由 GitHub 自動合併、部署。**你不能自己合併 PR，也不能推 main。**
 
 ## 步驟
 
+0. 看有沒有還開著的 `issues/*` PR。有的話，代表之前的 auto-merge 沒成功（檢查失敗或衝突），在最後回報裡列出它的編號和原因。不要去改它，今天照常從 main 出發。
 1. 取得台北今天的日期：`node -e "import('./scripts/validate.mjs').then(m=>console.log(m.taipeiToday()))"`。下面的 `TODAY` 都指這個日期。
 2. 完整讀 `docs/update-guide.md`，嚴格照它的規則寫。重點如下：
    - 中立。
@@ -35,13 +36,17 @@
      2. **只 commit `data/issues.json`**，commit 訊息「議題更新 TODAY」，結尾加一行 `Co-Authored-By: Claude <noreply@anthropic.com>`。
      3. push 這個分支。
      4. 開 PR 到 main，標題「議題更新 TODAY」，內文用守則裡的「PR 內文格式」。
-     5. 如果開不了 PR，就在最後回報裡附上 `https://github.com/KerryHuang/island-game/compare/main...issues/TODAY`。
+     5. 對這個 PR 開啟 auto-merge，合併方式用 merge commit。
+     6. 如果開不了 PR，就在最後回報裡附上 `https://github.com/KerryHuang/island-game/compare/main...issues/TODAY`。
+     7. 如果開不了 auto-merge，PR 就留著等人工審，並在最後回報裡寫明原因。不要改用直接合併。
    - **修兩輪還是失敗**：不開 PR。開一個 GitHub issue，標題「議題更新失敗 TODAY」，內文貼錯誤訊息。開不了 issue 就在最後回報裡寫明。
 
 ## 不能做的事
 
 - 不改 `data/issues.json` 以外的任何檔案。
-- 不推 main，不合併，不刪分支。
+- 不推 main，不刪分支。
+- 不自己合併 PR，只能開 auto-merge 交給 GitHub 在檢查通過後合併。
+- 不關閉、不修改其他 PR。
 - 不放沒有讀過內文的來源，也不寫來源裡沒有的事。
 
 ## 最後回報
@@ -49,5 +54,6 @@
 用繁體中文，列出：
 - 搜尋紀錄：12 座島各用了什麼關鍵字、找到幾則近 7 天的報導；heat 2 以上的既有議題各有沒有新報導。
 - 新增、更新、降溫、移除各幾則，各是哪幾則。
-- PR 或 compare 連結。
+- PR 或 compare 連結，以及 auto-merge 有沒有開成功。
+- 還開著、沒自動合併的舊 `issues/*` PR。
 - 哪些候選議題沒收，為什麼。

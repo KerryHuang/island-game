@@ -158,7 +158,7 @@ sh build.sh && npx -y wrangler@4.155.0 deploy
 
 - `.github/workflows/check.yml`：每個 PR 會跑測試與 build。
 - `.github/workflows/deploy.yml`：main 有新提交就部署到 Cloudflare。需要 repo secrets `CLOUDFLARE_API_TOKEN` 與 `CLOUDFLARE_ACCOUNT_ID`。也可以在 Actions 頁面手動觸發。
-- 每日議題更新：`/schedule` 雲端例行任務每天台北 07:00 執行，指示在 [`docs/routine-prompt.md`](routine-prompt.md)。它只改 `data/issues.json` 並開 PR，合併後才會自動部署。
+- 每日議題更新：`/schedule` 雲端例行任務每天台北 07:00 執行，指示在 [`docs/routine-prompt.md`](routine-prompt.md)。它只改 `data/issues.json` 並開 PR，同時開啟 auto-merge，`check.yml` 通過後自動合併並部署。這需要 repo 開啟 Allow auto-merge，並在 main 的 branch protection 把 `check` 設為必過檢查。
 
 ### claude.ai artifact（私人分享）
 
