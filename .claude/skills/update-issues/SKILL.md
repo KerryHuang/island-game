@@ -16,7 +16,7 @@ description: 在本機手動依時事更新今日群島的 data/issues.json，�
 4. 新來源照 routine-prompt 步驟 6 用 WebFetch 讀內文。本機網路沒被擋，可以再用 `curl -A 'Mozilla/5.0'` 確認回 200。
 5. 照 routine-prompt 步驟 7 驗證。
 6. **commit 前先把改動表給使用者看**，格式用 update-guide 的 PR 內文格式，使用者確認後才 commit。
-7. 收尾照 routine-prompt 步驟 8（含沒有更新、驗證修兩輪仍失敗時不開 PR）。開 PR 也不要合併。
+7. 收尾照 routine-prompt 步驟 8（含沒有更新、驗證修兩輪仍失敗時不開 PR）。開 PR 也不要合併，也不要開 auto-merge：手動更新由使用者自己審。
 
 ## 回報
 
