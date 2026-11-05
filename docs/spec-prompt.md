@@ -46,7 +46,7 @@
 
 ### 城市、島、牽連線、時段：`parts/10-data.js` 的 `DATA`
 
-- 12 座島固定不動：`traffic` 交通、`care` 托育、`edu` 教育、`elder` 長照、`sport` 運動、`green` 綠地、`culture` 文化、`youth` 青年、`digital` 數位、`safety` 安全、`eco` 環保、`tour` 觀光。每座島有 `no`、`name`、`en`、`q`、`r`、`ground`（brick／speckle／stripe）、`tree`（cone／cherry／fruit／palm／willow／round）、`band`（圖案帶顏色）、`summary`、`summaryEn`。
+- 12 座島固定不動：`traffic` 交通、`care` 托育、`edu` 教育、`elder` 長照、`sport` 運動、`green` 綠地、`culture` 文化、`youth` 生計、`digital` 數位、`safety` 安全、`eco` 環保、`tour` 觀光。每座島有 `no`、`name`、`en`、`q`、`r`、`ground`（brick／speckle／stripe）、`tree`（cone／cherry／fruit／palm／willow／round）、`band`（圖案帶顏色）、`summary`、`summaryEn`。
 - 9 條「議題牽連」（`flows`）：`from`／`to` 島 id、`cargo`（book、meal、sapling、medkit、laptop、ticket、ball、letter）、`role`（civil、researcher、elder、student、parent、commuter、farmer、worker、tourist）、`evidence`（official 直接牽動／thematic 間接相關／pending 有人提出）、`label`、`en`、`count`（限制在 4–14）。
 - 7 個時段（`dayCycle`）：`start` 分鐘、`name`、`en`、`lit`。`lit` 寫的是**模型種類**，不是議題 id，議題每天換也不會失效。
 - `DATA.city` 目前沒接上程式，城市名稱直接寫在 `parts/00-head.html`。
