@@ -1,6 +1,6 @@
 # 每日議題更新：例行任務指示
 
-這份是 `/schedule` 雲端例行任務每天執行時讀的指示。要改例行任務的行為，就改這個檔案並走 PR（改這份文件本身仍要走 PR）。
+這份是 `/schedule` 雲端例行任務每天執行時讀的指示。要改例行任務的行為，就改這個檔案。
 
 ## 你的工作
 
@@ -36,7 +36,7 @@
      2. **只 commit `data/issues.json`**，commit 訊息第一行「議題更新 TODAY」，空一行後放守則裡的「改動表格式」，結尾加一行 `Co-Authored-By: Claude <noreply@anthropic.com>`。
      3. `git pull --rebase origin main` 後 `git push origin main`。rebase 有衝突就 `git rebase --abort`，改走第 5 點。
      4. 推成功後，最後回報附上 commit 連結 `https://github.com/KerryHuang/island-game/commit/<sha>`。
-     5. 推不上 main（被保護規則擋下、衝突、或第 1 點不符）：把 commit 推到分支 `issues/TODAY`，開 PR 到 main，標題「議題更新 TODAY」，內文用「改動表格式」，並在回報裡寫明推不上的原因。不要用 force push。
+     5. 推不上 main（被拒絕、衝突、或第 1 點不符）：把 commit 推到分支 `issues/TODAY`，開 PR 到 main，標題「議題更新 TODAY」，內文用「改動表格式」，並在回報裡寫明推不上的原因。不要用 force push。
    - **修兩輪還是失敗**：不 commit。開一個 GitHub issue，標題「議題更新失敗 TODAY」，內文貼錯誤訊息。開不了 issue 就在最後回報裡寫明。
 
 ## 不能做的事

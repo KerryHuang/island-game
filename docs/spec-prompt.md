@@ -165,5 +165,5 @@ python3 -m http.server 8765      # 開 http://localhost:8765/preview.html，看�
 
 - 介面有改：桌面與手機（390×844 觸控模擬）都實測，也看 `#en` 有沒有出現 undefined。
 - 改了行為就同步改文件：介面與操作改 `docs/manual.md`，資料格式改 `docs/development.md`，議題規則改 `docs/update-guide.md`，規格數值改這份。
-- main 一有新提交就自動部署。一律開分支、發 PR，等檢查通過；不要自己合併。要給人看效果，用 `npx -y wrangler@4.155.0 versions upload` 上傳預覽版。
+- main 一有新提交就自動部署。不走 PR：本機跑完測試與 build 後直接推 main，推之前先問使用者。要給人看效果，用 `npx -y wrangler@4.155.0 versions upload` 上傳預覽版。
 - 大改版分階段做，每個階段結束時頁面都要能完整執行：場景骨架 → 零件庫與模型 → 介面與資料 → 小人與牽連線 → 手機、reduced-motion、說明、雙語、效能。

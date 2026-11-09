@@ -37,17 +37,16 @@ sed -n '/<script type="module">/,/<\/script>/p' index.html | sed '1d;$d' > /tmp/
 
 ## Git 與部署
 
-- **main 一有新提交就會自動部署到正式站。** 不要直接推 main，一律開分支、發 PR，等 PR 檢查通過。唯一例外是每日議題更新例行任務，見下方。
+- **main 一有新提交就會自動部署到正式站。** 這個專案不走 PR、main 沒有分支保護：改動在本機跑完測試與 build 後直接推 main。`deploy.yml` 部署前會再跑一次測試與 build，沒過就不上線，但壞掉的 commit 仍會留在 main，所以推之前一定要先在本機驗證。
 - 用 `git status --short` 確認要加的檔案，逐檔指名 `git add`，不要用 `git add -A` 或 `git add .`。
-- 不要合併 PR，除非使用者明確說可以。
-- 部署到正式站、刪除遠端分支，都要先問使用者。
+- 推 main 等於部署到正式站，推之前要先問使用者；刪除遠端分支也要先問。
 - 要給使用者看效果，用 `npx -y wrangler@4.155.0 versions upload` 上傳預覽版。這不會影響正式站。
 
 ## 每日議題更新
 
 - `/schedule` 雲端例行任務每天台北 07:00 執行，指示在 `docs/routine-prompt.md`。它只改 `data/issues.json`，驗證通過後直接推 main 並自動部署，不經 PR 與人工審。
-- 推不上 main（保護規則、衝突）時，它會改推分支 `issues/YYYY-MM-DD` 並開 PR。
-- 手動更新議題（`/update-issues`）仍然走 PR。
+- 推不上 main（例如 rebase 衝突）時，它會改推分支 `issues/YYYY-MM-DD` 並開 PR。
+- 手動更新議題（`/update-issues`）先給使用者看改動表，確認後直接推 main。
 - 雲端執行環境會擋掉 curl 連新聞網站，來源有沒有效以 WebFetch 讀不讀得到內文為準。
 
 ## 容易踩的坑

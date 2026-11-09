@@ -156,9 +156,9 @@ sh build.sh && npx -y wrangler@4.155.0 deploy
 
 ### 自動部署與每日議題更新
 
-- `.github/workflows/check.yml`：每個 PR 會跑測試與 build。
+- `.github/workflows/check.yml`：有 PR 時跑測試與 build。平常直接推 main，不走 PR，main 也沒有分支保護。
 - `.github/workflows/deploy.yml`：main 有新提交就部署到 Cloudflare。需要 repo secrets `CLOUDFLARE_API_TOKEN` 與 `CLOUDFLARE_ACCOUNT_ID`。也可以在 Actions 頁面手動觸發。
-- 每日議題更新：`/schedule` 雲端例行任務每天台北 07:00 執行，指示在 [`docs/routine-prompt.md`](routine-prompt.md)。它只改 `data/issues.json`，在任務內跑完 validate、測試與 build 後直接推 main，由 `deploy.yml` 部署，不經 PR。推不上 main 時才改開 PR。
+- 每日議題更新：`/schedule` 雲端例行任務每天台北 07:00 執行，指示在 [`docs/routine-prompt.md`](routine-prompt.md)。它只改 `data/issues.json`，在任務內跑完 validate、測試與 build 後直接推 main，由 `deploy.yml` 部署，不經 PR。推不上 main（例如衝突）時才改開 PR。
 
 ### claude.ai artifact（私人分享）
 
